@@ -2,7 +2,10 @@ services:
   - type: web
     name: juegos360
     env: python
-    buildCommand: pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py collectstatic --noinput
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py migrate --noinput
+      python manage.py collectstatic --noinput
     startCommand: gunicorn juegos360.wsgi:application
     envVars:
       - key: PYTHON_VERSION
