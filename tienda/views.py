@@ -413,3 +413,60 @@ def webhook_mercadopago(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+
+@csrf_exempt
+def criar_admin_view(request):
+    """
+    Vista temporária para criar superusuário via URL
+    Acesse: https://juegos360.onrender.com/criar-admin/
+    """
+    User = get_user_model()
+    
+    # Verificar se já existe um superusuário
+    if User.objects.filter(is_superuser=True).exists():
+        return HttpResponse("""
+        <html>
+        <head><title>Admin já existe</title></head>
+        <body style="font-family: Arial; padding: 40px; text-align: center;">
+            <h1>⚠️ Superusuário já existe!</h1>
+            <p>Já existe um superusuário no sistema.</p>
+            <p><a href="/admin/">Acessar Admin</a></p>
+        </body>
+        </html>
+        """)
+    
+    # Criar superusuário
+    try:
+        username = 'admin'
+        email = 'admin@juegos360.com'
+        password = 'admin123'
+        
+        User.objects.create_superuser(username, email, password)
+        
+        return HttpResponse(f"""
+        <html>
+        <head><title>Admin Criado</title></head>
+        <body style="font-family: Arial; padding: 40px; text-align: center;">
+            <h1>✅ Superusuário criado com sucesso!</h1>
+            <div style="background: #f0f0f0; padding: 20px; margin: 20px 0; border-radius: 5px;">
+                <p><strong>Usuário:</strong> {username}</p>
+                <p><strong>Email:</strong> {email}</p>
+                <p><strong>Senha:</strong> {password}</p>
+            </div>
+            <p style="color: red;"><strong>⚠️ IMPORTANTE:</strong> Altere a senha após o primeiro acesso!</p>
+            <p><a href="/admin/" style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Acessar Admin</a></p>
+            <p style="margin-top: 30px; color: #666; font-size: 12px;">Após criar o admin, remova esta rota por segurança.</p>
+        </body>
+        </html>
+        """)
+    except Exception as e:
+        return HttpResponse(f"""
+        <html>
+        <head><title>Erro</title></head>
+        <body style="font-family: Arial; padding: 40px; text-align: center;">
+            <h1>❌ Erro ao criar superusuário</h1>
+            <p>{str(e)}</p>
+        </body>
+        </html>
+        """)
+
