@@ -170,12 +170,12 @@ CLOUDINARY_STORAGE = {
 }
 
 # Se Cloudinary estiver configurado, usar para armazenamento
-if CLOUDINARY_STORAGE.get('CLOUD_NAME'):
-    try:
-        DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    except:
-        # Se cloudinary_storage não estiver disponível, continuar com local
-        pass
+# (Agora usando URLs de imagens, não precisa mais de Cloudinary para imagens)
+# if CLOUDINARY_STORAGE.get('CLOUD_NAME'):
+#     try:
+#         DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+#     except:
+#         pass
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
