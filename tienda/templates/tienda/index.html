@@ -20,6 +20,7 @@
     }
 }
 </script>
+{% if juegos_destacados %}
 <script type="application/ld+json">
 {
     "@context": "https://schema.org",
@@ -31,10 +32,10 @@
             "position": {{ forloop.counter }},
             "item": {
                 "@type": "Product",
-                "name": "{{ juego.titulo }}",
-                "description": "{{ juego.descripcion|truncatewords:20 }}",
+                "name": "{{ juego.titulo|escapejs }}",
+                "description": "{{ juego.descripcion|truncatewords:20|escapejs }}",
                 "url": "https://juegos360.onrender.com{% url 'detalle_juego' juego.id %}",
-                "image": "{{ juego.imagen|default:'' }}",
+                "image": "{{ juego.imagen|default:''|escapejs }}",
                 "offers": {
                     "@type": "Offer",
                     "price": "{{ juego.precio }}",
@@ -47,6 +48,7 @@
     ]
 }
 </script>
+{% endif %}
 {% endblock %}
 
 {% block content %}

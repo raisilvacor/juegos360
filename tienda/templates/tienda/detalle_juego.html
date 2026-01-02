@@ -12,12 +12,12 @@
 {
     "@context": "https://schema.org",
     "@type": "Product",
-    "name": "{{ juego.titulo }}",
+    "name": "{{ juego.titulo|escapejs }}",
     "description": "{{ juego.descripcion|escapejs }}",
-    "image": "{{ juego.imagen|default:'' }}",
+    "image": "{{ juego.imagen|default:''|escapejs }}",
     "brand": {
         "@type": "Brand",
-        "name": "{{ juego.desarrolladora }}"
+        "name": "{{ juego.desarrolladora|escapejs }}"
     },
     "category": "{{ juego.get_genero_display }}",
     "offers": {
@@ -69,7 +69,7 @@
         {
             "@type": "ListItem",
             "position": 3,
-            "name": "{{ juego.titulo }}",
+            "name": "{{ juego.titulo|escapejs }}",
             "item": "https://juegos360.onrender.com{% url 'detalle_juego' juego.id %}"
         }
     ]
