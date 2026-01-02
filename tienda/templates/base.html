@@ -35,46 +35,14 @@
     
     <!-- Local Business Schema -->
     <meta name="geo.region" content="AR-C">
-    <meta name="geo.placename" content="Córdoba, Argentina">
+    <meta name="geo.placename" content="Cordoba, Argentina">
     
     {% load static %}
     <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     
-    <!-- Structured Data (JSON-LD) -->
-    {% block structured_data %}
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Store",
-        "name": "Juegos360",
-        "description": "Tienda especializada en juegos para Xbox 360 en Cordoba, Argentina",
-        "url": "https://juegos360.onrender.com",
-        "telephone": "+543515415397",
-        "address": {
-            "@type": "PostalAddress",
-            "addressLocality": "Cordoba",
-            "addressRegion": "Cordoba",
-            "addressCountry": "AR"
-        },
-        "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": "-31.4201",
-            "longitude": "-64.1888"
-        },
-        "priceRange": "$$",
-        "currenciesAccepted": "ARS",
-        "paymentAccepted": "Mercado Pago",
-        "areaServed": {
-            "@type": "Country",
-            "name": "Argentina"
-        },
-        "sameAs": [
-            "https://wa.me/543515415397"
-        ]
-    }
-    </script>
-    {% endblock %}
+    <!-- Structured Data (JSON-LD) - Removido temporariamente para evitar erros -->
+    {% block structured_data %}{% endblock %}
 </head>
 <body>
     <!-- Header -->

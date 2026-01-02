@@ -6,23 +6,7 @@
 {% block meta_keywords %}{{ juego.titulo }}, xbox 360, {{ juego.get_genero_display|lower }}, juegos xbox 360 cordoba, comprar {{ juego.titulo }} argentina{% endblock %}
 {% block og_image %}{{ juego.imagen|default:'' }}{% endblock %}
 
-{% block structured_data %}
-{{ block.super }}
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": "{{ juego.titulo|escapejs }}",
-    "description": "{{ juego.descripcion|truncatewords:30|escapejs }}",
-    "offers": {
-        "@type": "Offer",
-        "priceCurrency": "ARS",
-        "price": "{{ juego.precio }}",
-        "availability": "https://schema.org/{% if juego.disponible %}InStock{% else %}OutOfStock{% endif %}"
-    }
-}
-</script>
-{% endblock %}
+{% block structured_data %}{% endblock %}
 
 {% block content %}
 <section class="section">
