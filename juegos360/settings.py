@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',  # Para armazenar mídia no Cloudinary
+    'cloudinary',  # SDK do Cloudinary
     'tienda',  # Nuestra app de la tienda
 ]
 
