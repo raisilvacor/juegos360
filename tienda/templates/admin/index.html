@@ -2,11 +2,48 @@
 
 {% block extrahead %}
 {{ block.super }}
-<script>
-    // Auto-refresh a cada 1 minuto (60000 milissegundos)
+<script type="text/javascript">
+// Auto-refresh infinito a cada 1 minuto (60000ms)
+console.log('[Admin Auto-Refresh] Script carregado');
+(function() {
+    'use strict';
+    
+    var refreshInterval;
+    
+    function startAutoRefresh() {
+        console.log('[Admin Auto-Refresh] Iniciando auto-refresh a cada 1 minuto');
+        
+        // Limpar qualquer intervalo anterior (se houver)
+        if (refreshInterval) {
+            clearInterval(refreshInterval);
+        }
+        
+        // setInterval para refresh infinito a cada 60 segundos
+        refreshInterval = setInterval(function() {
+            var now = new Date();
+            console.log('[Admin Auto-Refresh] Atualizando página em', now.toLocaleTimeString());
+            window.location.reload(true);
+        }, 60000); // 60000 milissegundos = 1 minuto
+        
+        console.log('[Admin Auto-Refresh] Auto-refresh configurado com sucesso');
+    }
+    
+    // Múltiplas formas de garantir que execute
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        startAutoRefresh();
+    } else {
+        document.addEventListener('DOMContentLoaded', startAutoRefresh);
+        window.addEventListener('load', startAutoRefresh);
+    }
+    
+    // Fallback: iniciar após 500ms se ainda não iniciou
     setTimeout(function() {
-        location.reload();
-    }, 60000);
+        if (!refreshInterval) {
+            console.log('[Admin Auto-Refresh] Iniciando via fallback');
+            startAutoRefresh();
+        }
+    }, 500);
+})();
 </script>
 {% endblock %}
 
