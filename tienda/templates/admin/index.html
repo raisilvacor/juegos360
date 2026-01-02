@@ -1,0 +1,12 @@
+{% extends "admin/index.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<script>
+    // Auto-refresh a cada 1 minuto (60000 milissegundos)
+    setTimeout(function() {
+        location.reload();
+    }, 60000);
+</script>
+{% endblock %}
+
