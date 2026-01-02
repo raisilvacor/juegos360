@@ -74,7 +74,7 @@
                                 <td class="pedido-item-info">
                                     <div class="pedido-item-image">
                                         {% if item.juego.imagen %}
-                                            <img src="{{ item.juego.imagen.url }}" alt="{{ item.juego.titulo }}">
+                                            <img src="{{ item.juego.imagen.url }}" alt="{{ item.juego.titulo }}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'pedido-placeholder\\'>Sin Imagen</div>';">
                                         {% else %}
                                             <div class="pedido-placeholder">Sin Imagen</div>
                                         {% endif %}

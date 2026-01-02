@@ -28,11 +28,11 @@
                                 <tr>
                                     <td class="carrito-item-info">
                                         <div class="carrito-item-image">
-                                            {% if item.juego.imagen %}
-                                                <img src="{{ item.juego.imagen.url }}" alt="{{ item.juego.titulo }}">
-                                            {% else %}
-                                                <div class="carrito-placeholder">Sin Imagen</div>
-                                            {% endif %}
+                                        {% if item.juego.imagen %}
+                                            <img src="{{ item.juego.imagen.url }}" alt="{{ item.juego.titulo }}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'carrito-placeholder\\'>Sin Imagen</div>';">
+                                        {% else %}
+                                            <div class="carrito-placeholder">Sin Imagen</div>
+                                        {% endif %}
                                         </div>
                                         <div class="carrito-item-details">
                                             <h3>{{ item.juego.titulo }}</h3>
