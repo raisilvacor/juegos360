@@ -400,3 +400,25 @@ def crear_admin_view(request):
         """)
     except Exception as e:
         return HttpResponse(f"Error al crear superusuario: {str(e)}", status=500)
+
+
+def robots_txt(request):
+    """Vista para servir robots.txt"""
+    from django.conf import settings
+    from django.http import HttpResponse
+    import os
+    
+    robots_path = os.path.join(settings.BASE_DIR, 'static', 'robots.txt')
+    
+    if os.path.exists(robots_path):
+        with open(robots_path, 'r') as f:
+            content = f.read()
+        return HttpResponse(content, content_type='text/plain')
+    else:
+        # Fallback se o arquivo não existir
+        content = """User-agent: *
+Allow: /
+Disallow: /admin/
+Sitemap: https://juegos360.onrender.com/sitemap.xml
+"""
+        return HttpResponse(content, content_type='text/plain')
