@@ -8,7 +8,10 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
+from django.core.management import call_command
+from io import StringIO
 import json
+import sys
 from .models import Juego, Pedido, ItemPedido
 from .mercadopago_client import MercadoPagoClient
 from django.contrib.auth import get_user_model
@@ -400,6 +403,86 @@ def crear_admin_view(request):
         """)
     except Exception as e:
         return HttpResponse(f"Error al crear superusuario: {str(e)}", status=500)
+
+
+@csrf_exempt
+def importar_juegos_view(request):
+    """
+    Vista temporária para importar juegos del índice via URL
+    Acesse: https://juegos360.onrender.com/importar-juegos/
+    """
+    
+    # Verificar token de seguridad (opcional, puede configurarse en variables de entorno)
+    token = request.GET.get('token', '')
+    expected_token = getattr(settings, 'IMPORT_TOKEN', 'importar123')
+    
+    if token != expected_token:
+        return HttpResponse("""
+        <html>
+        <head><title>Importar Juegos</title></head>
+        <body style="font-family: Arial; padding: 40px; text-align: center;">
+            <h1>Importar Juegos del Índice</h1>
+            <p>Esta página importa todos los juegos del índice con precio de 3000 pesos.</p>
+            <p style="color: red;"><strong>⚠️ ADVERTENCIA:</strong> Esta acción puede tardar varios minutos.</p>
+            <p><a href="?token=importar123" style="background: #28a745; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 18px;">Importar Juegos Ahora</a></p>
+            <p style="margin-top: 30px; color: #666; font-size: 12px;">Después de importar, elimine esta ruta por seguridad.</p>
+        </body>
+        </html>
+        """)
+    
+    # Ejecutar el comando de importación
+    try:
+        # Capturar la salida del comando
+        old_stdout = sys.stdout
+        sys.stdout = StringIO()
+        
+        call_command('importar_juegos_indice')
+        
+        output = sys.stdout.getvalue()
+        sys.stdout = old_stdout
+        
+        # Contar juegos después de la importación
+        total = Juego.objects.count()
+        disponibles = Juego.objects.filter(disponible=True).count()
+        con_precio_3000 = Juego.objects.filter(precio=3000).count()
+        
+        return HttpResponse(f"""
+        <html>
+        <head><title>Juegos Importados</title></head>
+        <body style="font-family: Arial; padding: 40px; text-align: center;">
+            <h1 style="color: #28a745;">✅ ¡Juegos Importados con Éxito!</h1>
+            <div style="background: #f0f0f0; padding: 20px; margin: 20px 0; border-radius: 5px; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;">
+                <h3>Estadísticas:</h3>
+                <ul>
+                    <li><strong>Total de juegos:</strong> {total}</li>
+                    <li><strong>Juegos disponibles:</strong> {disponibles}</li>
+                    <li><strong>Juegos con precio 3000:</strong> {con_precio_3000}</li>
+                </ul>
+            </div>
+            <div style="background: #fff3cd; padding: 15px; margin: 20px 0; border-radius: 5px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                <p style="color: #856404;"><strong>⚠️ IMPORTANTE:</strong> Elimine esta ruta después de usar por seguridad.</p>
+            </div>
+            <p><a href="/admin/tienda/juego/" style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Ver Juegos en el Admin</a></p>
+            <p><a href="/catalogo/" style="background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-left: 10px;">Ver Catálogo Público</a></p>
+            <details style="margin-top: 30px; text-align: left; max-width: 800px; margin-left: auto; margin-right: auto;">
+                <summary style="cursor: pointer; color: #666;">Ver detalles de la importación</summary>
+                <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 12px;">{output[:2000]}</pre>
+            </details>
+        </body>
+        </html>
+        """)
+    except Exception as e:
+        sys.stdout = old_stdout
+        return HttpResponse(f"""
+        <html>
+        <head><title>Error al Importar</title></head>
+        <body style="font-family: Arial; padding: 40px; text-align: center;">
+            <h1 style="color: red;">❌ Error al Importar Juegos</h1>
+            <p style="color: red;">{str(e)}</p>
+            <p><a href="/admin/">Volver al Admin</a></p>
+        </body>
+        </html>
+        """, status=500)
 
 
 def robots_txt(request):

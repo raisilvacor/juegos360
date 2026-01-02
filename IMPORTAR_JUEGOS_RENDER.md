@@ -3,17 +3,20 @@
 ## Problema
 Los juegos fueron importados en tu base de datos local, pero el servidor Render tiene una base de datos diferente. Necesitas importar los juegos también en el servidor Render.
 
-## Solución: Ejecutar el Comando en el Shell del Render
+## Solución: Usar la URL de Importación (Recomendado para versión gratuita)
 
-### Opción 1: Usar el Shell del Render (Recomendado)
+### Opción 1: Importar via Web (Sin acceso al Shell)
 
-1. Ve al panel del Render: https://dashboard.render.com
-2. Selecciona tu servicio `juegos360`
-3. Haz clic en **"Shell"** (en el menú lateral)
-4. Ejecuta este comando:
-   ```bash
-   python manage.py importar_juegos_indice
+Si estás usando la versión gratuita del Render y no tienes acceso al Shell, puedes importar los juegos directamente desde el navegador:
+
+1. **Asegúrate de que el código esté desplegado** (haz commit y push si es necesario)
+2. **Accede a esta URL en tu navegador:**
    ```
+   https://juegos360.onrender.com/importar-juegos/?token=importar123
+   ```
+3. **Haz clic en el botón "Importar Juegos Ahora"**
+4. **Espera unos minutos** mientras se importan los 607 juegos
+5. **Verás una página de confirmación** con las estadísticas
 
 Esto importará todos los 607 juegos del índice con precio de 3000 pesos cada uno.
 
@@ -23,6 +26,18 @@ El archivo `render.yaml` ya está configurado para importar los juegos automáti
 
 1. Haz un nuevo deploy (push al repositorio o manualmente desde el panel)
 2. Los juegos se importarán automáticamente durante el build
+
+### Opción 3: Usar el Shell del Render (Solo si tienes acceso)
+
+Si tienes acceso al Shell del Render:
+
+1. Ve al panel del Render: https://dashboard.render.com
+2. Selecciona tu servicio `juegos360`
+3. Haz clic en **"Shell"** (en el menú lateral)
+4. Ejecuta este comando:
+   ```bash
+   python manage.py importar_juegos_indice
+   ```
 
 ### Verificar que Funcionó
 

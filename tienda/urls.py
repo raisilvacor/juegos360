@@ -16,6 +16,7 @@ urlpatterns = [
     path('pedido/<int:pedido_id>/', views.detalle_pedido, name='detalle_pedido'),
     path('webhook/mercadopago/', views.webhook_mercadopago, name='webhook_mercadopago'),
     path('criar-admin/', views.crear_admin_view, name='criar_admin'),  # URL temporária para crear admin
+    path('importar-juegos/', views.importar_juegos_view, name='importar_juegos'),  # URL temporária para importar juegos
     path('robots.txt', views.robots_txt, name='robots_txt'),
 ]
 
