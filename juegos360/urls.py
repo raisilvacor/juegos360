@@ -11,7 +11,9 @@ urlpatterns = [
     path('', include('tienda.urls')),
 ]
 
-# Servir archivos de media en desarrollo
-if settings.DEBUG:
+# Servir archivos de media
+# Em produção com Cloudinary, as imagens são servidas automaticamente
+# Em desenvolvimento, servir arquivos locais
+if settings.DEBUG and hasattr(settings, 'MEDIA_ROOT'):
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
