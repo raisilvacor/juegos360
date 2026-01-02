@@ -36,8 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'cloudinary_storage',  # Para armazenar mídia no Cloudinary (descomente se configurar)
-    # 'cloudinary',  # SDK do Cloudinary (descomente se configurar)
+    'cloudinary_storage',  # Para armazenar mídia no Cloudinary
+    'cloudinary',  # SDK do Cloudinary
     'tienda',  # Nuestra app de la tienda
 ]
 
@@ -156,6 +156,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # Para collectstatic no Render
 # WhiteNoise já está configurado no MIDDLEWARE, não precisa de storage customizado
 
 # Media files (uploads) - Usar Cloudinary para armazenamento persistente
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Configuração do Cloudinary (usar variáveis de ambiente)
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
@@ -163,19 +166,13 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
 }
 
-# Se Cloudinary estiver configurado, usar. Senão, usar armazenamento local
-if CLOUDINARY_STORAGE['CLOUD_NAME']:
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    MEDIA_URL = '/media/'
-    # Cloudinary serve as imagens automaticamente, não precisa de MEDIA_ROOT
-else:
-    # Fallback para armazenamento local (desenvolvimento)
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = BASE_DIR / 'media'
-    
-# Sempre definir MEDIA_ROOT para evitar erros
-if not CLOUDINARY_STORAGE['CLOUD_NAME']:
-    MEDIA_ROOT = BASE_DIR / 'media'
+# Se Cloudinary estiver configurado, usar para armazenamento
+if CLOUDINARY_STORAGE.get('CLOUD_NAME'):
+    try:
+        DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    except:
+        # Se cloudinary_storage não estiver disponível, continuar com local
+        pass
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -193,4 +190,3 @@ MERCADOPAGO_ENABLED = True  # Cambiar a False para desactivar temporalmente
 
 # URL base del sitio (para webhooks)
 SITE_URL = os.environ.get('SITE_URL', 'http://127.0.0.1:8000')
-
