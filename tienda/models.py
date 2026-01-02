@@ -50,11 +50,12 @@ class Juego(models.Model):
         verbose_name='Precio',
         validators=[MinValueValidator(0)]
     )
-    imagen = models.ImageField(
-        upload_to='juegos/',
-        verbose_name='Imagen de Portada',
+    imagen = models.URLField(
+        max_length=500,
+        verbose_name='URL de Imagen de Portada',
         blank=True,
-        null=True
+        null=True,
+        help_text='URL completa de la imagen del juego (ejemplo: https://ejemplo.com/imagen.jpg)'
     )
     link_descarga = models.URLField(
         max_length=500,

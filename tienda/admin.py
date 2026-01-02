@@ -14,7 +14,8 @@ class JuegoAdmin(admin.ModelAdmin):
     readonly_fields = ('fecha_creacion', 'fecha_actualizacion')
     fieldsets = (
         ('Información Básica', {
-            'fields': ('titulo', 'descripcion', 'imagen')
+            'fields': ('titulo', 'descripcion', 'imagen'),
+            'description': 'Ingrese la URL completa de la imagen del juego (ejemplo: https://ejemplo.com/imagen.jpg)'
         }),
         ('Detalles del Juego', {
             'fields': ('genero', 'desarrolladora', 'ano_lanzamiento', 'clasificacion')

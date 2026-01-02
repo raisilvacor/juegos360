@@ -9,7 +9,7 @@
         <div class="juego-detalle">
             <div class="juego-detalle-image">
                 {% if juego.imagen %}
-                    <img src="{{ juego.imagen.url }}" alt="{{ juego.titulo }}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'juego-detalle-placeholder\\'>Sin Imagen</div>';">
+                    <img src="{{ juego.imagen }}" alt="{{ juego.titulo }}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'juego-detalle-placeholder\\'>Sin Imagen</div>';">
                 {% else %}
                     <div class="juego-detalle-placeholder">Sin Imagen</div>
                 {% endif %}
@@ -67,7 +67,7 @@
                         <a href="{% url 'detalle_juego' juego_rel.id %}">
                             <div class="juego-card-image">
                                 {% if juego_rel.imagen %}
-                                    <img src="{{ juego_rel.imagen.url }}" alt="{{ juego_rel.titulo }}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'juego-card-placeholder\\'>Sin Imagen</div>';">
+                                    <img src="{{ juego_rel.imagen }}" alt="{{ juego_rel.titulo }}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'juego-card-placeholder\\'>Sin Imagen</div>';">
                                 {% else %}
                                     <div class="juego-card-placeholder">Sin Imagen</div>
                                 {% endif %}

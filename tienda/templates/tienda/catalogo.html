@@ -52,7 +52,7 @@
                     <a href="{% url 'detalle_juego' juego.id %}">
                         <div class="juego-card-image">
                             {% if juego.imagen %}
-                                <img src="{{ juego.imagen.url }}" alt="{{ juego.titulo }}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'juego-card-placeholder\\'>Sin Imagen</div>';">
+                                <img src="{{ juego.imagen }}" alt="{{ juego.titulo }}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'juego-card-placeholder\\'>Sin Imagen</div>';">
                             {% else %}
                                 <div class="juego-card-placeholder">Sin Imagen</div>
                             {% endif %}

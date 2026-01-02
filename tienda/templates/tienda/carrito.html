@@ -29,7 +29,7 @@
                                     <td class="carrito-item-info">
                                         <div class="carrito-item-image">
                                         {% if item.juego.imagen %}
-                                            <img src="{{ item.juego.imagen.url }}" alt="{{ item.juego.titulo }}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'carrito-placeholder\\'>Sin Imagen</div>';">
+                                            <img src="{{ item.juego.imagen }}" alt="{{ item.juego.titulo }}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'carrito-placeholder\\'>Sin Imagen</div>';">
                                         {% else %}
                                             <div class="carrito-placeholder">Sin Imagen</div>
                                         {% endif %}
