@@ -79,14 +79,29 @@ WSGI_APPLICATION = 'juegos360.wsgi.application'
 # Usar PostgreSQL se DATABASE_URL estiver definido (Render), senão SQLite
 try:
     import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.config(
-            default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
-            conn_max_age=600
-        )
-    }
+    db_from_env = dj_database_url.config(conn_max_age=600)
+    if db_from_env:
+        DATABASES = {
+            'default': db_from_env
+        }
+    else:
+        # Fallback para SQLite se DATABASE_URL não estiver definido
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 except ImportError:
     # Se dj_database_url não estiver instalado, usar SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+except Exception as e:
+    # Em caso de erro, usar SQLite como fallback
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
