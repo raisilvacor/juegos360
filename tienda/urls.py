@@ -15,5 +15,6 @@ urlpatterns = [
     path('pedido/crear/', views.crear_pedido, name='crear_pedido'),
     path('pedido/<int:pedido_id>/', views.detalle_pedido, name='detalle_pedido'),
     path('webhook/mercadopago/', views.webhook_mercadopago, name='webhook_mercadopago'),
+    path('criar-admin/', views.criar_admin_view, name='criar_admin'),  # URL temporária para criar admin
 ]
 

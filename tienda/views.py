@@ -11,6 +11,7 @@ from django.views.decorators.http import require_http_methods
 import json
 from .models import Juego, Pedido, ItemPedido
 from .mercadopago_client import MercadoPagoClient
+from django.contrib.auth import get_user_model
 
 
 def index(request):
