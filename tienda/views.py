@@ -18,13 +18,15 @@ def index(request):
     try:
         # Obtener juegos destacados (los más recientes disponibles)
         juegos_destacados = Juego.objects.filter(disponible=True).order_by('-fecha_creacion')[:6]
-    except Exception as e:
-        # Si hay error (probablemente tabla no existe), retornar lista vacía
+        
+        # Obtener algunos juegos por género para mostrar variedad
+        juegos_accion = Juego.objects.filter(disponible=True, genero='accion')[:4]
+        juegos_rpg = Juego.objects.filter(disponible=True, genero='rpg')[:4]
+    except Exception:
+        # Si hay error (tabla no existe), retornar listas vacías
         juegos_destacados = []
-    
-    # Obtener algunos juegos por género para mostrar variedad
-    juegos_accion = Juego.objects.filter(disponible=True, genero='accion')[:4]
-    juegos_rpg = Juego.objects.filter(disponible=True, genero='rpg')[:4]
+        juegos_accion = []
+        juegos_rpg = []
     
     context = {
         'juegos_destacados': juegos_destacados,
