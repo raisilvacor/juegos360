@@ -155,9 +155,22 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # Para collectstatic no Render
 # Configuração do WhiteNoise para servir arquivos estáticos
 # WhiteNoise já está configurado no MIDDLEWARE, não precisa de storage customizado
 
-# Media files (uploads)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Media files (uploads) - Usar Cloudinary para armazenamento persistente
+# Configuração do Cloudinary (usar variáveis de ambiente)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
+}
+
+# Se Cloudinary estiver configurado, usar. Senão, usar armazenamento local
+if CLOUDINARY_STORAGE['CLOUD_NAME']:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    MEDIA_URL = '/media/'
+else:
+    # Fallback para armazenamento local (desenvolvimento)
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
