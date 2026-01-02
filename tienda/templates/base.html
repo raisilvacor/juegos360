@@ -15,11 +15,11 @@
     <meta name="geo.placename" content="Córdoba">
     <meta name="geo.position" content="-31.4201;-64.1888">
     <meta name="ICBM" content="-31.4201, -64.1888">
-    <link rel="canonical" href="{% block canonical_url %}https://juegos360.onrender.com{{ request.path }}{% endblock %}">
+    <link rel="canonical" href="{% block canonical_url %}https://juegos360.onrender.com{% if request.path %}{{ request.path }}{% endif %}{% endblock %}">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="{% block og_url %}https://juegos360.onrender.com{{ request.path }}{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}https://juegos360.onrender.com{% if request.path %}{{ request.path }}{% endif %}{% endblock %}">
     <meta property="og:title" content="{% block og_title %}{% block title %}Juegos360 - Tu Tienda de Juegos Xbox 360 en Córdoba, Argentina{% endblock %}{% endblock %}">
     <meta property="og:description" content="{% block og_description %}{% block meta_description %}Compra juegos para Xbox 360 en Córdoba, Argentina. La mejor selección de juegos Xbox 360 con envío a toda Argentina.{% endblock %}{% endblock %}">
     <meta property="og:image" content="{% block og_image %}https://juegos360.onrender.com{% static 'favicon.svg' %}{% endblock %}">
@@ -28,7 +28,7 @@
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="{% block twitter_url %}https://juegos360.onrender.com{{ request.path }}{% endblock %}">
+    <meta name="twitter:url" content="{% block twitter_url %}https://juegos360.onrender.com{% if request.path %}{{ request.path }}{% endif %}{% endblock %}">
     <meta name="twitter:title" content="{% block twitter_title %}{% block title %}Juegos360 - Tu Tienda de Juegos Xbox 360 en Córdoba, Argentina{% endblock %}{% endblock %}">
     <meta name="twitter:description" content="{% block twitter_description %}{% block meta_description %}Compra juegos para Xbox 360 en Córdoba, Argentina. La mejor selección de juegos Xbox 360 con envío a toda Argentina.{% endblock %}{% endblock %}">
     <meta name="twitter:image" content="{% block twitter_image %}https://juegos360.onrender.com{% static 'favicon.svg' %}{% endblock %}">
