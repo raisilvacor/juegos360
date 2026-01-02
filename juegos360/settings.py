@@ -167,9 +167,14 @@ CLOUDINARY_STORAGE = {
 if CLOUDINARY_STORAGE['CLOUD_NAME']:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     MEDIA_URL = '/media/'
+    # Cloudinary serve as imagens automaticamente, não precisa de MEDIA_ROOT
 else:
     # Fallback para armazenamento local (desenvolvimento)
     MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+    
+# Sempre definir MEDIA_ROOT para evitar erros
+if not CLOUDINARY_STORAGE['CLOUD_NAME']:
     MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
