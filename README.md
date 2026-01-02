@@ -1,15 +1,18 @@
 # Juegos360 - Tienda de Juegos Xbox 360
 
-Una tienda online profesional para la venta de juegos de Xbox 360, desarrollada con Django 4+.
+Una tienda online profesional para la venta de juegos de Xbox 360, desarrollada con Django 4+ e integrada con Mercado Pago para pagos reales.
 
 ## 🎮 Características
 
 - **Catálogo completo** de juegos Xbox 360
 - **Sistema de carrito de compras** funcional
-- **Gestión de pedidos** (sin pagos reales)
+- **Integración con Mercado Pago** para pagos reales
+- **Sistema de pedidos** completo con seguimiento
+- **Links de descarga** disponibles después del pago confirmado
 - **Panel administrativo** de Django para gestionar juegos
 - **Diseño gamer profesional** con tema oscuro moderno
 - **Búsqueda y filtros** por género y precio
+- **Botón flotante de WhatsApp** para contacto
 - **Responsive design** para todos los dispositivos
 
 ## 🚀 Instalación
