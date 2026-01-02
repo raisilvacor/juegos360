@@ -51,7 +51,7 @@
                     <a href="{% url 'catalogo' %}" class="nav-link">Catálogo</a>
                     <a href="{% url 'carrito' %}" class="nav-link cart-link">
                         Carrito 
-                        {% if carrito_items > 0 %}
+                        {% if carrito_items and carrito_items > 0 %}
                             <span class="cart-badge">{{ carrito_items }}</span>
                         {% endif %}
                     </a>
