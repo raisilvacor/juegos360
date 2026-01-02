@@ -1,7 +1,6 @@
 """
 Context processors para la tienda
 """
-from django.db import connection
 
 
 def carrito(request):
@@ -9,17 +8,6 @@ def carrito(request):
     Context processor que agrega información del carrito a todos los templates
     """
     try:
-        # Verificar si las tablas existen
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='tienda_juego'")
-            table_exists = cursor.fetchone()
-        
-        if not table_exists:
-            return {
-                'carrito_items': 0,
-                'carrito_total': 0,
-            }
-        
         from .models import Juego
         
         carrito = request.session.get('carrito', {})
@@ -34,7 +22,7 @@ def carrito(request):
             except (Juego.DoesNotExist, Exception):
                 pass
     except Exception:
-        # Si hay cualquier error, retornar valores por defecto
+        # Si hay cualquier error (tabla no existe, etc), retornar valores por defecto
         return {
             'carrito_items': 0,
             'carrito_total': 0,
