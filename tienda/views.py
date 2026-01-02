@@ -13,6 +13,9 @@ from .models import Juego, Pedido, ItemPedido
 from .mercadopago_client import MercadoPagoClient
 from django.contrib.auth import get_user_model
 
+User = get_user_model()
+from django.contrib.auth import get_user_model
+
 
 def index(request):
     """Vista para la página principal"""
