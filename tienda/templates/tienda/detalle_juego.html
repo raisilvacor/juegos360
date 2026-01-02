@@ -22,7 +22,7 @@
     "category": "{{ juego.get_genero_display }}",
     "offers": {
         "@type": "Offer",
-        "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'detalle_juego' juego.id %}",
+        "url": "https://juegos360.onrender.com{% url 'detalle_juego' juego.id %}",
         "priceCurrency": "ARS",
         "price": "{{ juego.precio }}",
         "priceValidUntil": "2027-12-31",
@@ -58,19 +58,19 @@
             "@type": "ListItem",
             "position": 1,
             "name": "Inicio",
-            "item": "{{ request.scheme }}://{{ request.get_host }}/"
+            "item": "https://juegos360.onrender.com/"
         },
         {
             "@type": "ListItem",
             "position": 2,
             "name": "Catálogo",
-            "item": "{{ request.scheme }}://{{ request.get_host }}/catalogo/"
+            "item": "https://juegos360.onrender.com/catalogo/"
         },
         {
             "@type": "ListItem",
             "position": 3,
             "name": "{{ juego.titulo }}",
-            "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'detalle_juego' juego.id %}"
+            "item": "https://juegos360.onrender.com{% url 'detalle_juego' juego.id %}"
         }
     ]
 }

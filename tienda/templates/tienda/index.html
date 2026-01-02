@@ -12,10 +12,10 @@
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Juegos360",
-    "url": "{{ request.scheme }}://{{ request.get_host }}",
+    "url": "https://juegos360.onrender.com",
     "potentialAction": {
         "@type": "SearchAction",
-        "target": "{{ request.scheme }}://{{ request.get_host }}/catalogo/?busqueda={search_term_string}",
+        "target": "https://juegos360.onrender.com/catalogo/?busqueda={search_term_string}",
         "query-input": "required name=search_term_string"
     }
 }
@@ -33,7 +33,7 @@
                 "@type": "Product",
                 "name": "{{ juego.titulo }}",
                 "description": "{{ juego.descripcion|truncatewords:20 }}",
-                "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'detalle_juego' juego.id %}",
+                "url": "https://juegos360.onrender.com{% url 'detalle_juego' juego.id %}",
                 "image": "{{ juego.imagen|default:'' }}",
                 "offers": {
                     "@type": "Offer",
