@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Pedido #{{ pedido.id }} - Juegos360{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="pedido-container">
+            <div class="pedido-header">
+                <h1 class="page-title">✅ Pedido Confirmado</h1>
+                <p class="pedido-numero">Número de Pedido: #{{ pedido.id }}</p>
+            </div>
+            
+            <div class="pedido-info">
+                <div class="info-card">
+                    <h3>Información del Cliente</h3>
+                    <div class="info-item">
+                        <strong>Nombre:</strong> {{ pedido.nombre_cliente }}
+                    </div>
+                    <div class="info-item">
+                        <strong>Email:</strong> {{ pedido.email }}
+                    </div>
+                    <div class="info-item">
+                        <strong>Estado:</strong> 
+                        <span class="estado-badge estado-{{ pedido.estado }}">{{ pedido.get_estado_display }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Fecha:</strong> {{ pedido.fecha_creacion|date:"d/m/Y H:i" }}
+                    </div>
+                    {% if pedido.mp_preference_id %}
+                    <div class="info-item">
+                        <strong>ID Preferencia Mercado Pago:</strong> {{ pedido.mp_preference_id }}
+                    </div>
+                    {% endif %}
+                    {% if pedido.estado == 'pendiente' and pedido.mp_checkout_url %}
+                    <div class="info-item">
+                        <a href="{{ pedido.mp_checkout_url }}" class="btn btn-primary btn-large" target="_blank">
+                            💳 Pagar con Mercado Pago
+                        </a>
+                    </div>
+                    {% elif pedido.estado == 'pagado' %}
+                    <div class="info-item">
+                        <p class="text-success">✅ Pago completado exitosamente</p>
+                    </div>
+                    {% elif pedido.estado == 'rechazado' and pedido.mp_checkout_url %}
+                    <div class="info-item">
+                        <p class="text-danger">❌ El pago fue rechazado o cancelado</p>
+                        <a href="{{ pedido.mp_checkout_url }}" class="btn btn-primary" target="_blank">
+                            Intentar Pagar Nuevamente
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="pedido-items">
+                <h3>Juegos del Pedido</h3>
+                <table class="pedido-table">
+                    <thead>
+                        <tr>
+                            <th>Juego</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                            {% if pedido.estado == 'pagado' %}
+                            <th>Descarga</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in pedido.items.all %}
+                            <tr>
+                                <td class="pedido-item-info">
+                                    <div class="pedido-item-image">
+                                        {% if item.juego.imagen %}
+                                            <img src="{{ item.juego.imagen.url }}" alt="{{ item.juego.titulo }}">
+                                        {% else %}
+                                            <div class="pedido-placeholder">Sin Imagen</div>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <h4>{{ item.juego.titulo }}</h4>
+                                    </div>
+                                </td>
+                                <td>{{ item.cantidad }}</td>
+                                <td>${{ item.precio }} ARS</td>
+                                <td>${{ item.subtotal|floatformat:2 }} ARS</td>
+                                {% if pedido.estado == 'pagado' %}
+                                <td>
+                                    {% if item.juego.link_descarga %}
+                                        <a href="{{ item.juego.link_descarga }}" class="btn btn-success" target="_blank" rel="noopener noreferrer">
+                                            ⬇️ Descargar
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">Sin link disponible</span>
+                                    {% endif %}
+                                </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="pedido-total">
+                            <td colspan="{% if pedido.estado == 'pagado' %}4{% else %}3{% endif %}"><strong>Total:</strong></td>
+                            <td><strong>${{ pedido.total|floatformat:2 }} ARS</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            
+            {% if pedido.estado == 'pagado' %}
+            <div class="descargas-section">
+                <h3>📦 Descargas Disponibles</h3>
+                <div class="descargas-list">
+                    {% for item in pedido.items.all %}
+                        {% if item.juego.link_descarga %}
+                        <div class="descarga-item">
+                            <h4>{{ item.juego.titulo }}</h4>
+                            <a href="{{ item.juego.link_descarga }}" class="btn btn-primary btn-large" target="_blank" rel="noopener noreferrer">
+                                ⬇️ Descargar Juego
+                            </a>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="pedido-actions">
+                <a href="{% url 'catalogo' %}" class="btn btn-primary">Seguir Comprando</a>
+                <a href="{% url 'index' %}" class="btn btn-secondary">Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

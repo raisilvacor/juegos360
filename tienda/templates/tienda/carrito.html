@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Carrito - Juegos360{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="page-title">🛒 Carrito de Compras</h1>
+        
+        {% if items %}
+        <div class="carrito-container">
+            <div class="carrito-items">
+                <form method="post" action="{% url 'actualizar_carrito' %}">
+                    {% csrf_token %}
+                    <table class="carrito-table">
+                        <thead>
+                            <tr>
+                                <th>Juego</th>
+                                <th>Precio Unitario</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                                <tr>
+                                    <td class="carrito-item-info">
+                                        <div class="carrito-item-image">
+                                            {% if item.juego.imagen %}
+                                                <img src="{{ item.juego.imagen.url }}" alt="{{ item.juego.titulo }}">
+                                            {% else %}
+                                                <div class="carrito-placeholder">Sin Imagen</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="carrito-item-details">
+                                            <h3>{{ item.juego.titulo }}</h3>
+                                            <p>{{ item.juego.get_genero_display }}</p>
+                                        </div>
+                                    </td>
+                                    <td>${{ item.juego.precio }} ARS</td>
+                                    <td>
+                                        <input type="number" 
+                                               name="cantidad_{{ item.juego.id }}" 
+                                               value="{{ item.cantidad }}" 
+                                               min="1" 
+                                               max="10" 
+                                               class="input-cantidad-small">
+                                    </td>
+                                    <td class="carrito-subtotal">${{ item.subtotal|floatformat:2 }} ARS</td>
+                                    <td>
+                                        <a href="{% url 'eliminar_del_carrito' item.juego.id %}" 
+                                           class="btn btn-danger btn-small">Eliminar</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="carrito-actions">
+                        <button type="submit" class="btn btn-secondary">Actualizar Carrito</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="carrito-resumen">
+                <div class="resumen-card">
+                    <h3>Resumen del Pedido</h3>
+                    <div class="resumen-item">
+                        <span>Subtotal:</span>
+                        <span>${{ total|floatformat:2 }} ARS</span>
+                    </div>
+                    <div class="resumen-item resumen-total">
+                        <span>Total:</span>
+                        <span>${{ total|floatformat:2 }} ARS</span>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary btn-large" onclick="document.getElementById('checkout-form').style.display='block'">
+                        Proceder al Pago con Mercado Pago
+                    </button>
+                </div>
+                
+                <form id="checkout-form" method="post" action="{% url 'crear_pedido' %}" style="display:none;" class="checkout-form">
+                    {% csrf_token %}
+                    <h3>Información del Cliente</h3>
+                    <div class="form-group">
+                        <label for="nombre_cliente">Nombre Completo:</label>
+                        <input type="text" id="nombre_cliente" name="nombre_cliente" required class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required class="input-field">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-large">Confirmar Pedido</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="carrito-vacio">
+            <p>Tu carrito está vacío</p>
+            <a href="{% url 'catalogo' %}" class="btn btn-primary">Explorar Catálogo</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+

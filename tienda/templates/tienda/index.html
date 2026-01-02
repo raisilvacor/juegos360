@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inicio - Juegos360{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h2 class="hero-title">Bienvenido a Juegos360</h2>
+            <p class="hero-subtitle">La mejor selección de juegos para Xbox 360</p>
+            <a href="{% url 'catalogo' %}" class="btn btn-primary">Explorar Catálogo</a>
+        </div>
+    </div>
+</section>
+
+<!-- Juegos Destacados -->
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">🎯 Juegos Destacados</h2>
+        <div class="juegos-grid">
+            {% for juego in juegos_destacados %}
+                <div class="juego-card">
+                    <a href="{% url 'detalle_juego' juego.id %}">
+                        <div class="juego-card-image">
+                            {% if juego.imagen %}
+                                <img src="{{ juego.imagen.url }}" alt="{{ juego.titulo }}">
+                            {% else %}
+                                <div class="juego-card-placeholder">Sin Imagen</div>
+                            {% endif %}
+                        </div>
+                        <div class="juego-card-content">
+                            <h3 class="juego-card-title">{{ juego.titulo }}</h3>
+                            <p class="juego-card-genero">{{ juego.get_genero_display }}</p>
+                            <p class="juego-card-precio">${{ juego.precio }} ARS</p>
+                        </div>
+                    </a>
+                </div>
+            {% empty %}
+                <p class="no-juegos">No hay juegos disponibles en este momento.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Juegos de Acción -->
+{% if juegos_accion %}
+<section class="section section-dark">
+    <div class="container">
+        <h2 class="section-title">⚔️ Acción</h2>
+        <div class="juegos-grid">
+            {% for juego in juegos_accion %}
+                <div class="juego-card">
+                    <a href="{% url 'detalle_juego' juego.id %}">
+                        <div class="juego-card-image">
+                            {% if juego.imagen %}
+                                <img src="{{ juego.imagen.url }}" alt="{{ juego.titulo }}">
+                            {% else %}
+                                <div class="juego-card-placeholder">Sin Imagen</div>
+                            {% endif %}
+                        </div>
+                        <div class="juego-card-content">
+                            <h3 class="juego-card-title">{{ juego.titulo }}</h3>
+                            <p class="juego-card-precio">${{ juego.precio }} ARS</p>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Juegos RPG -->
+{% if juegos_rpg %}
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">🗡️ RPG</h2>
+        <div class="juegos-grid">
+            {% for juego in juegos_rpg %}
+                <div class="juego-card">
+                    <a href="{% url 'detalle_juego' juego.id %}">
+                        <div class="juego-card-image">
+                            {% if juego.imagen %}
+                                <img src="{{ juego.imagen.url }}" alt="{{ juego.titulo }}">
+                            {% else %}
+                                <div class="juego-card-placeholder">Sin Imagen</div>
+                            {% endif %}
+                        </div>
+                        <div class="juego-card-content">
+                            <h3 class="juego-card-title">{{ juego.titulo }}</h3>
+                            <p class="juego-card-precio">${{ juego.precio }} ARS</p>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+

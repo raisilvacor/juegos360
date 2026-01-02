@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ juego.titulo }} - Juegos360{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="juego-detalle">
+            <div class="juego-detalle-image">
+                {% if juego.imagen %}
+                    <img src="{{ juego.imagen.url }}" alt="{{ juego.titulo }}">
+                {% else %}
+                    <div class="juego-detalle-placeholder">Sin Imagen</div>
+                {% endif %}
+            </div>
+            
+            <div class="juego-detalle-content">
+                <h1 class="juego-detalle-title">{{ juego.titulo }}</h1>
+                
+                <div class="juego-detalle-meta">
+                    <span class="meta-badge">{{ juego.get_genero_display }}</span>
+                    <span class="meta-badge">{{ juego.get_clasificacion_display }}</span>
+                    <span class="meta-badge">{{ juego.ano_lanzamiento }}</span>
+                </div>
+                
+                <div class="juego-detalle-precio">
+                    <span class="precio-label">Precio:</span>
+                    <span class="precio-valor">${{ juego.precio }} ARS</span>
+                </div>
+                
+                <div class="juego-detalle-info">
+                    <div class="info-item">
+                        <strong>Desarrolladora:</strong> {{ juego.desarrolladora }}
+                    </div>
+                    <div class="info-item">
+                        <strong>Año de Lanzamiento:</strong> {{ juego.ano_lanzamiento }}
+                    </div>
+                    <div class="info-item">
+                        <strong>Clasificación:</strong> {{ juego.get_clasificacion_display }}
+                    </div>
+                </div>
+                
+                <div class="juego-detalle-descripcion">
+                    <h3>Descripción</h3>
+                    <p>{{ juego.descripcion }}</p>
+                </div>
+                
+                <form method="post" action="{% url 'agregar_al_carrito' juego.id %}" class="juego-detalle-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad:</label>
+                        <input type="number" id="cantidad" name="cantidad" value="1" min="1" max="10" class="input-cantidad">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-large">Agregar al Carrito</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Juegos Relacionados -->
+        {% if juegos_relacionados %}
+        <div class="juegos-relacionados">
+            <h2 class="section-title">Juegos Relacionados</h2>
+            <div class="juegos-grid">
+                {% for juego_rel in juegos_relacionados %}
+                    <div class="juego-card">
+                        <a href="{% url 'detalle_juego' juego_rel.id %}">
+                            <div class="juego-card-image">
+                                {% if juego_rel.imagen %}
+                                    <img src="{{ juego_rel.imagen.url }}" alt="{{ juego_rel.titulo }}">
+                                {% else %}
+                                    <div class="juego-card-placeholder">Sin Imagen</div>
+                                {% endif %}
+                            </div>
+                            <div class="juego-card-content">
+                                <h3 class="juego-card-title">{{ juego_rel.titulo }}</h3>
+                                <p class="juego-card-precio">${{ juego_rel.precio }} ARS</p>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+

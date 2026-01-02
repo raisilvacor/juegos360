@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Catálogo - Juegos360{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="page-title">🎮 Catálogo de Juegos</h1>
+        
+        <!-- Filtros y Búsqueda -->
+        <div class="filtros-container">
+            <form method="get" class="filtros-form">
+                <div class="filtro-group">
+                    <input type="text" name="busqueda" placeholder="Buscar juegos..." 
+                           value="{{ busqueda_actual }}" class="input-search">
+                </div>
+                <div class="filtro-group">
+                    <select name="genero" class="select-filtro">
+                        <option value="">Todos los géneros</option>
+                        {% for genero in generos_disponibles %}
+                            <option value="{{ genero }}" {% if genero_actual == genero %}selected{% endif %}>
+                                {{ genero|title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filtro-group">
+                    <select name="orden" class="select-filtro">
+                        <option value="recientes" {% if orden_actual == 'recientes' %}selected{% endif %}>Más recientes</option>
+                        <option value="precio_asc" {% if orden_actual == 'precio_asc' %}selected{% endif %}>Precio: menor a mayor</option>
+                        <option value="precio_desc" {% if orden_actual == 'precio_desc' %}selected{% endif %}>Precio: mayor a menor</option>
+                        <option value="titulo" {% if orden_actual == 'titulo' %}selected{% endif %}>Título A-Z</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-secondary">Filtrar</button>
+                {% if genero_actual or busqueda_actual %}
+                    <a href="{% url 'catalogo' %}" class="btn btn-outline">Limpiar</a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Resultados -->
+        <div class="resultados-info">
+            <p>Mostrando {{ juegos|length }} juego{{ juegos|length|pluralize }}</p>
+        </div>
+
+        <!-- Grid de Juegos -->
+        <div class="juegos-grid">
+            {% for juego in juegos %}
+                <div class="juego-card">
+                    <a href="{% url 'detalle_juego' juego.id %}">
+                        <div class="juego-card-image">
+                            {% if juego.imagen %}
+                                <img src="{{ juego.imagen.url }}" alt="{{ juego.titulo }}">
+                            {% else %}
+                                <div class="juego-card-placeholder">Sin Imagen</div>
+                            {% endif %}
+                        </div>
+                        <div class="juego-card-content">
+                            <h3 class="juego-card-title">{{ juego.titulo }}</h3>
+                            <p class="juego-card-genero">{{ juego.get_genero_display }}</p>
+                            <p class="juego-card-precio">${{ juego.precio }} ARS</p>
+                        </div>
+                    </a>
+                </div>
+            {% empty %}
+                <div class="no-juegos">
+                    <p>No se encontraron juegos con los filtros seleccionados.</p>
+                    <a href="{% url 'catalogo' %}" class="btn btn-primary">Ver todos los juegos</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
