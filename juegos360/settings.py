@@ -18,7 +18,13 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-change-in-pro
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS') else []
+# ALLOWED_HOSTS - incluir domínio do Render por padrão
+allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', '')
+if allowed_hosts_env:
+    ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',') if host.strip()]
+else:
+    # Por padrão, permitir todos os domínios do Render e localhost
+    ALLOWED_HOSTS = ['juegos360.onrender.com', '.onrender.com', 'localhost', '127.0.0.1', '*']
 
 
 # Application definition
