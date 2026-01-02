@@ -24,7 +24,7 @@ if allowed_hosts_env:
     ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',') if host.strip()]
 else:
     # Por padrão, permitir todos os domínios do Render e localhost
-    ALLOWED_HOSTS = ['juegos360.onrender.com', '.onrender.com', 'localhost', '127.0.0.1', '*']
+    ALLOWED_HOSTS = ['juegos360.onrender.com', '.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
