@@ -1,7 +1,53 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Inicio - Juegos360{% endblock %}
+{% block title %}Juegos Xbox 360 en Córdoba, Argentina - Juegos360{% endblock %}
+{% block meta_description %}Compra los mejores juegos para Xbox 360 en Córdoba, Argentina. Envío a toda Argentina. Precios en pesos argentinos. Catálogo completo de juegos Xbox 360.{% endblock %}
+{% block meta_keywords %}juegos xbox 360 cordoba, comprar juegos xbox 360 argentina, tienda juegos xbox 360, juegos xbox 360 online, xbox 360 cordoba argentina{% endblock %}
+
+{% block structured_data %}
+{{ block.super }}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Juegos360",
+    "url": "{{ request.scheme }}://{{ request.get_host }}",
+    "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ request.scheme }}://{{ request.get_host }}/catalogo/?busqueda={search_term_string}",
+        "query-input": "required name=search_term_string"
+    }
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": [
+        {% for juego in juegos_destacados %}
+        {
+            "@type": "ListItem",
+            "position": {{ forloop.counter }},
+            "item": {
+                "@type": "Product",
+                "name": "{{ juego.titulo }}",
+                "description": "{{ juego.descripcion|truncatewords:20 }}",
+                "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'detalle_juego' juego.id %}",
+                "image": "{{ juego.imagen|default:'' }}",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "{{ juego.precio }}",
+                    "priceCurrency": "ARS",
+                    "availability": "https://schema.org/{% if juego.disponible %}InStock{% else %}OutOfStock{% endif %}"
+                }
+            }
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ]
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
