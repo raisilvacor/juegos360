@@ -136,8 +136,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / 'staticfiles'  # Para collectstatic no Render
 
 # Configuração do WhiteNoise para servir arquivos estáticos
-# Não usar storage customizado por enquanto para evitar problemas
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# WhiteNoise já está configurado no MIDDLEWARE, não precisa de storage customizado
 
 # Media files (uploads)
 MEDIA_URL = '/media/'
