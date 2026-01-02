@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ juego.titulo }} - Xbox 360 | Comprar en Córdoba, Argentina | Juegos360{% endblock %}
-{% block meta_description %}{{ juego.descripcion|truncatewords:30 }} Compra {{ juego.titulo }} para Xbox 360 en Córdoba, Argentina. Precio: ${{ juego.precio }} ARS. Envío a toda Argentina.{% endblock %}
+{% block title %}{{ juego.titulo }} - Xbox 360 | Comprar en Cordoba, Argentina | Juegos360{% endblock %}
+{% block meta_description %}{{ juego.descripcion|truncatewords:30 }} Compra {{ juego.titulo }} para Xbox 360 en Cordoba, Argentina. Precio: ${{ juego.precio }} ARS. Envio a toda Argentina.{% endblock %}
 {% block meta_keywords %}{{ juego.titulo }}, xbox 360, {{ juego.get_genero_display|lower }}, juegos xbox 360 cordoba, comprar {{ juego.titulo }} argentina{% endblock %}
-{% block og_image %}{{ juego.imagen|default:'' }}{% endblock %}
-
-{% block structured_data %}{% endblock %}
+{% block og_title %}{{ juego.titulo }} - Xbox 360 | Juegos360{% endblock %}
+{% block og_description %}{{ juego.descripcion|truncatewords:30 }} Compra {{ juego.titulo }} para Xbox 360 en Cordoba, Argentina.{% endblock %}
+{% block twitter_title %}{{ juego.titulo }} - Xbox 360 | Juegos360{% endblock %}
+{% block twitter_description %}{{ juego.descripcion|truncatewords:30 }} Compra {{ juego.titulo }} para Xbox 360 en Cordoba, Argentina.{% endblock %}
 
 {% block content %}
 <section class="section">
