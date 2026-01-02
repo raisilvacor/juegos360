@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /crear-admin/
+Disallow: /webhook/
+Disallow: /carrito/
+Disallow: /pedido/
+
+Sitemap: https://juegos360.onrender.com/sitemap.xml
+

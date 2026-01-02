@@ -14,7 +14,6 @@ from .mercadopago_client import MercadoPagoClient
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
-from django.contrib.auth import get_user_model
 
 
 def index(request):
@@ -49,17 +48,18 @@ def catalogo(request):
     busqueda = request.GET.get('busqueda')
     orden = request.GET.get('orden', 'recientes')
     
+    # Aplicar filtros
     if genero:
         juegos = juegos.filter(genero=genero)
     
     if busqueda:
         juegos = juegos.filter(
             Q(titulo__icontains=busqueda) |
-            Q(desarrolladora__icontains=busqueda) |
-            Q(descripcion__icontains=busqueda)
+            Q(descripcion__icontains=busqueda) |
+            Q(desarrolladora__icontains=busqueda)
         )
     
-    # Ordenamiento
+    # Ordenar
     if orden == 'precio_asc':
         juegos = juegos.order_by('precio')
     elif orden == 'precio_desc':
@@ -69,9 +69,8 @@ def catalogo(request):
     else:  # recientes
         juegos = juegos.order_by('-fecha_creacion')
     
-    # Obtener géneros únicos para el filtro
-    generos = Juego.objects.filter(disponible=True).values_list('genero', flat=True).distinct()
-    generos_disponibles = [choice[0] for choice in Juego.GENEROS if choice[0] in generos]
+    # Obtener géneros disponibles para el filtro
+    generos_disponibles = Juego.objects.filter(disponible=True).values_list('genero', flat=True).distinct()
     
     context = {
         'juegos': juegos,
@@ -87,7 +86,7 @@ def detalle_juego(request, juego_id):
     """Vista para los detalles de un juego"""
     juego = get_object_or_404(Juego, id=juego_id, disponible=True)
     
-    # Obtener juegos relacionados (mismo género)
+    # Obtener juegos relacionados (mismo género, excluyendo el actual)
     juegos_relacionados = Juego.objects.filter(
         genero=juego.genero,
         disponible=True
@@ -102,32 +101,59 @@ def detalle_juego(request, juego_id):
 
 def agregar_al_carrito(request, juego_id):
     """Vista para agregar un juego al carrito"""
-    juego = get_object_or_404(Juego, id=juego_id, disponible=True)
-    
     if request.method == 'POST':
+        juego = get_object_or_404(Juego, id=juego_id, disponible=True)
         cantidad = int(request.POST.get('cantidad', 1))
         
-        # Inicializar carrito si no existe
-        if 'carrito' not in request.session:
-            request.session['carrito'] = {}
+        if cantidad < 1:
+            cantidad = 1
         
-        # Agregar o actualizar cantidad
-        carrito = request.session['carrito']
+        # Obtener o inicializar el carrito en la sesión
+        carrito = request.session.get('carrito', {})
+        
+        # Agregar o actualizar la cantidad del juego
         if str(juego_id) in carrito:
             carrito[str(juego_id)] += cantidad
         else:
             carrito[str(juego_id)] = cantidad
         
         request.session['carrito'] = carrito
-        messages.success(request, f'{juego.titulo} agregado al carrito')
-        
-        # Redirigir según el origen
-        if request.POST.get('redirect') == 'carrito':
-            return redirect('carrito')
-        else:
-            return redirect('detalle_juego', juego_id=juego_id)
+        messages.success(request, f'{juego.titulo} agregado al carrito.')
     
     return redirect('detalle_juego', juego_id=juego_id)
+
+
+def actualizar_carrito(request):
+    """Vista para actualizar las cantidades del carrito"""
+    if request.method == 'POST':
+        carrito = request.session.get('carrito', {})
+        
+        for juego_id, cantidad in request.POST.items():
+            if juego_id.startswith('cantidad_'):
+                juego_id = juego_id.replace('cantidad_', '')
+                cantidad = int(cantidad)
+                
+                if cantidad > 0:
+                    carrito[juego_id] = cantidad
+                elif juego_id in carrito:
+                    del carrito[juego_id]
+        
+        request.session['carrito'] = carrito
+        messages.success(request, 'Carrito actualizado.')
+    
+    return redirect('carrito')
+
+
+def eliminar_del_carrito(request, juego_id):
+    """Vista para eliminar un juego del carrito"""
+    carrito = request.session.get('carrito', {})
+    
+    if str(juego_id) in carrito:
+        del carrito[str(juego_id)]
+        request.session['carrito'] = carrito
+        messages.success(request, 'Juego eliminado del carrito.')
+    
+    return redirect('carrito')
 
 
 def carrito_view(request):
@@ -143,11 +169,11 @@ def carrito_view(request):
             items.append({
                 'juego': juego,
                 'cantidad': cantidad,
-                'subtotal': subtotal,
+                'subtotal': subtotal
             })
             total += subtotal
         except Juego.DoesNotExist:
-            # Si el juego ya no existe o no está disponible, eliminarlo del carrito
+            # Si el juego no existe, eliminarlo del carrito
             del carrito[juego_id]
             request.session['carrito'] = carrito
     
@@ -158,56 +184,21 @@ def carrito_view(request):
     return render(request, 'tienda/carrito.html', context)
 
 
-def actualizar_carrito(request):
-    """Vista para actualizar cantidades en el carrito"""
+def crear_pedido(request):
+    """Vista para crear un pedido desde el carrito"""
     if request.method == 'POST':
         carrito = request.session.get('carrito', {})
         
-        for juego_id, cantidad in request.POST.items():
-            if juego_id.startswith('cantidad_'):
-                juego_id = juego_id.replace('cantidad_', '')
-                cantidad = int(cantidad)
-                
-                if cantidad > 0:
-                    carrito[juego_id] = cantidad
-                else:
-                    # Eliminar del carrito si la cantidad es 0
-                    if juego_id in carrito:
-                        del carrito[juego_id]
+        if not carrito:
+            messages.error(request, 'Tu carrito está vacío.')
+            return redirect('carrito')
         
-        request.session['carrito'] = carrito
-        messages.success(request, 'Carrito actualizado')
-    
-    return redirect('carrito')
-
-
-def eliminar_del_carrito(request, juego_id):
-    """Vista para eliminar un juego del carrito"""
-    carrito = request.session.get('carrito', {})
-    
-    if str(juego_id) in carrito:
-        juego = get_object_or_404(Juego, id=juego_id)
-        del carrito[str(juego_id)]
-        request.session['carrito'] = carrito
-        messages.success(request, f'{juego.titulo} eliminado del carrito')
-    
-    return redirect('carrito')
-
-
-def crear_pedido(request):
-    """Vista para crear un pedido desde el carrito e integrar con Ualá"""
-    carrito = request.session.get('carrito', {})
-    
-    if not carrito:
-        messages.error(request, 'Tu carrito está vacío')
-        return redirect('carrito')
-    
-    if request.method == 'POST':
-        nombre_cliente = request.POST.get('nombre_cliente')
-        email = request.POST.get('email')
+        # Obtener datos del formulario
+        nombre_cliente = request.POST.get('nombre_cliente', '').strip()
+        email = request.POST.get('email', '').strip()
         
         if not nombre_cliente or not email:
-            messages.error(request, 'Por favor completa todos los campos')
+            messages.error(request, 'Por favor completa todos los campos.')
             return redirect('carrito')
         
         # Calcular total
@@ -222,16 +213,16 @@ def crear_pedido(request):
                 items_data.append({
                     'juego': juego,
                     'cantidad': cantidad,
-                    'precio': float(juego.precio),
+                    'precio': juego.precio
                 })
             except Juego.DoesNotExist:
                 continue
         
         if not items_data:
-            messages.error(request, 'No hay juegos válidos en tu carrito')
+            messages.error(request, 'No hay juegos válidos en tu carrito.')
             return redirect('carrito')
         
-        # Crear pedido
+        # Crear el pedido
         pedido = Pedido.objects.create(
             nombre_cliente=nombre_cliente,
             email=email,
@@ -239,59 +230,41 @@ def crear_pedido(request):
             estado='pendiente'
         )
         
-        # Crear items del pedido
-        items_pedido = []
+        # Crear los items del pedido
         for item_data in items_data:
-            item = ItemPedido.objects.create(
+            ItemPedido.objects.create(
                 pedido=pedido,
                 juego=item_data['juego'],
                 cantidad=item_data['cantidad'],
                 precio=item_data['precio']
             )
-            items_pedido.append(item)
         
-        # SOLO Mercado Pago - sin fallbacks
+        # Crear preferencia de Mercado Pago
         try:
             mp_client = MercadoPagoClient()
+            items_mp = ItemPedido.objects.filter(pedido=pedido)
             
-            # Crear preferencia en Mercado Pago
-            preferencia = mp_client.crear_preferencia(pedido, items_pedido)
+            preferencia = mp_client.crear_preferencia(pedido, items_mp)
             
-            # Validar que recibimos init_point
-            checkout_url = preferencia.get('init_point')
-            if not checkout_url:
-                # Si no hay init_point, eliminar el pedido y mostrar error
+            if preferencia and 'init_point' in preferencia:
+                pedido.mp_preference_id = preferencia.get('id')
+                pedido.mp_checkout_url = preferencia.get('init_point')
+                pedido.save()
+                
+                # Limpiar el carrito
+                request.session['carrito'] = {}
+                
+                return redirect('detalle_pedido', pedido_id=pedido.id)
+            else:
+                # Si falla la creación de la preferencia, eliminar el pedido
                 pedido.delete()
-                messages.error(request, 'Error: No se recibió la URL de pago de Mercado Pago. Intenta nuevamente.')
+                messages.error(request, 'No se pudo crear la preferencia de pago. Por favor intenta más tarde.')
                 return redirect('carrito')
-            
-            # Guardar información de Mercado Pago en el pedido
-            pedido.mp_preference_id = preferencia.get('id')
-            pedido.mp_checkout_url = checkout_url
-            pedido.mp_status = 'pending'
-            pedido.save()
-            
-            # Limpiar carrito antes de redirigir
-            request.session['carrito'] = {}
-            
-            # Redirigir DIRECTAMENTE al checkout de Mercado Pago
-            return redirect(checkout_url)
-            
+        
         except Exception as e:
-            # Si hay error, ELIMINAR el pedido y mostrar error claro
+            # Si hay error, eliminar el pedido
             pedido.delete()
-            error_msg = str(e)
-            
-            # Log del error para debugging
-            import logging
-            logger = logging.getLogger(__name__)
-            logger.error(f"Error al crear preferencia Mercado Pago: {error_msg}")
-            
-            messages.error(
-                request, 
-                f'Error al procesar el pago: {error_msg}. '
-                'Por favor verifica tus datos e intenta nuevamente.'
-            )
+            messages.error(request, f'Error al procesar el pago: {str(e)}. Por favor verifica tus datos e intenta nuevamente.')
             return redirect('carrito')
     
     return redirect('carrito')
@@ -301,48 +274,27 @@ def detalle_pedido(request, pedido_id):
     """Vista para mostrar los detalles de un pedido"""
     pedido = get_object_or_404(Pedido, id=pedido_id)
     
-    # Si el pedido está pendiente pero no tiene preferencia de Mercado Pago, intentar crearla
-    if pedido.estado == 'pendiente' and not pedido.mp_preference_id and getattr(settings, 'MERCADOPAGO_ENABLED', True):
+    # Verificar estado del pago en Mercado Pago si está pendiente
+    if pedido.estado == 'pendiente' and pedido.mp_preference_id:
         try:
             mp_client = MercadoPagoClient()
-            items_pedido = pedido.items.all()
+            status = request.GET.get('status')
             
-            if items_pedido.exists():
-                # Crear preferencia en Mercado Pago
-                preferencia = mp_client.crear_preferencia(pedido, items_pedido)
-                
-                # Guardar información de Mercado Pago en el pedido
-                pedido.mp_preference_id = preferencia.get('id')
-                pedido.mp_checkout_url = preferencia.get('init_point')
-                pedido.mp_status = 'pending'
-                pedido.save()
-                
-                checkout_url = preferencia.get('init_point')
-                if checkout_url:
-                    messages.success(request, 'Preferencia de pago creada. Redirigiendo al checkout...')
-                    return redirect(checkout_url)
-                else:
-                    raise Exception("No se recibió init_point en la respuesta")
-        except Exception as e:
-            # Si hay error, mostrar mensaje pero continuar
-            error_msg = str(e)
-            messages.warning(request, f'No se pudo crear la preferencia de pago. Error: {error_msg}')
-    
-    # Verificar estado del pago si hay parámetros en la URL (retorno de Mercado Pago)
-    status_param = request.GET.get('status')
-    if status_param and pedido.mp_preference_id:
-        if status_param == 'approved':
-            pedido.estado = 'pagado'
-            pedido.mp_status = 'approved'
-            pedido.save()
-            messages.success(request, '¡Pago confirmado!')
-        elif status_param == 'rejected':
-            pedido.estado = 'rechazado'
-            pedido.mp_status = 'rejected'
-            pedido.save()
-        elif status_param == 'pending':
-            pedido.mp_status = 'pending'
-            pedido.save()
+            if status:
+                # Actualizar estado según el parámetro de la URL
+                if status == 'approved':
+                    pedido.estado = 'pagado'
+                    pedido.mp_status = 'approved'
+                    pedido.save()
+                elif status == 'rejected':
+                    pedido.estado = 'rechazado'
+                    pedido.mp_status = 'rejected'
+                    pedido.save()
+                elif status == 'pending':
+                    pedido.mp_status = 'pending'
+                    pedido.save()
+        except Exception:
+            pass
     
     context = {
         'pedido': pedido,
@@ -351,62 +303,49 @@ def detalle_pedido(request, pedido_id):
 
 
 @csrf_exempt
-@require_http_methods(["POST", "GET"])
+@require_http_methods(["POST"])
 def webhook_mercadopago(request):
     """
-    Webhook para recibir notificaciones de Mercado Pago sobre cambios en los pagos
+    Webhook para recibir notificaciones de Mercado Pago
     """
     try:
-        # Mercado Pago puede enviar datos como POST con JSON o como GET con query params
-        if request.method == 'POST':
-            data = json.loads(request.body) if request.body else {}
-        else:
-            data = request.GET.dict()
-        
-        # Obtener información del pago
-        # Mercado Pago envía 'data.id' con el ID del pago
-        payment_id = data.get('data', {}).get('id') if isinstance(data.get('data'), dict) else data.get('id')
-        type_notification = data.get('type', '')
+        data = json.loads(request.body)
+        payment_id = data.get('data', {}).get('id')
         
         if not payment_id:
-            return JsonResponse({'error': 'payment_id no proporcionado'}, status=400)
+            return JsonResponse({'status': 'error', 'message': 'No payment ID'}, status=400)
         
-        # Obtener información del pago desde Mercado Pago
-        try:
-            mp_client = MercadoPagoClient()
-            pago_info = mp_client.obtener_pago(payment_id)
+        # Obtener información del pago
+        mp_client = MercadoPagoClient()
+        payment_info = mp_client.obtener_pago(payment_id)
+        
+        if payment_info:
+            external_reference = payment_info.get('external_reference')
             
-            # Buscar el pedido por external_reference
-            external_reference = pago_info.get('external_reference')
-            if not external_reference:
-                return JsonResponse({'error': 'external_reference no encontrado'}, status=400)
-            
-            try:
-                pedido = Pedido.objects.get(id=int(external_reference))
-            except (Pedido.DoesNotExist, ValueError):
-                return JsonResponse({'error': 'Pedido no encontrado'}, status=404)
-            
-            # Actualizar estado del pedido según el pago
-            status_pago = pago_info.get('status', '').lower()
-            if status_pago == 'approved':
-                pedido.estado = 'pagado'
-                pedido.mp_status = 'approved'
-                pedido.mp_payment_id = str(payment_id)
-                pedido.save()
-            elif status_pago == 'rejected' or status_pago == 'cancelled':
-                pedido.estado = 'rechazado'
-                pedido.mp_status = status_pago
-                pedido.mp_payment_id = str(payment_id)
-                pedido.save()
-            elif status_pago == 'pending':
-                pedido.mp_status = 'pending'
-                pedido.mp_payment_id = str(payment_id)
-                pedido.save()
-            
-            return JsonResponse({'status': 'ok', 'pedido_id': pedido.id})
-            
-        except Exception as e:
-            return JsonResponse({'error': f'Error al procesar pago: {str(e)}'}, status=500)
+            if external_reference:
+                try:
+                    pedido = Pedido.objects.get(id=int(external_reference))
+                    
+                    # Actualizar estado del pedido
+                    status = payment_info.get('status')
+                    if status == 'approved':
+                        pedido.estado = 'pagado'
+                        pedido.mp_status = 'approved'
+                        pedido.mp_payment_id = payment_id
+                        pedido.save()
+                    elif status == 'rejected':
+                        pedido.estado = 'rechazado'
+                        pedido.mp_status = 'rejected'
+                        pedido.save()
+                    elif status == 'pending':
+                        pedido.mp_status = 'pending'
+                        pedido.save()
+                    
+                    return JsonResponse({'status': 'ok'})
+                except Pedido.DoesNotExist:
+                    return JsonResponse({'status': 'error', 'message': 'Order not found'}, status=404)
+        
+        return JsonResponse({'status': 'error', 'message': 'Invalid payment info'}, status=400)
         
     except json.JSONDecodeError:
         return JsonResponse({'error': 'JSON inválido'}, status=400)
@@ -415,7 +354,7 @@ def webhook_mercadopago(request):
 
 
 @csrf_exempt
-def criar_admin_view(request):
+def crear_admin_view(request):
     """
     Vista temporária para criar superusuário via URL
     Acesse: https://juegos360.onrender.com/criar-admin/
@@ -460,13 +399,4 @@ def criar_admin_view(request):
         </html>
         """)
     except Exception as e:
-        return HttpResponse(f"""
-        <html>
-        <head><title>Erro</title></head>
-        <body style="font-family: Arial; padding: 40px; text-align: center;">
-            <h1>❌ Erro ao criar superusuário</h1>
-            <p>{str(e)}</p>
-        </body>
-        </html>
-        """)
-
+        return HttpResponse(f"Error al crear superusuario: {str(e)}", status=500)

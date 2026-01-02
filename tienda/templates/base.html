@@ -1,12 +1,80 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-AR" itemscope itemtype="https://schema.org/Store">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Juegos360 - Tu Tienda de Juegos Xbox 360{% endblock %}</title>
+    
+    <!-- SEO Meta Tags -->
+    <title>{% block title %}Juegos360 - Tu Tienda de Juegos Xbox 360 en Córdoba, Argentina{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Compra juegos para Xbox 360 en Córdoba, Argentina. La mejor selección de juegos Xbox 360 con envío a toda Argentina. Precios en pesos argentinos.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}juegos xbox 360, xbox 360 cordoba, juegos xbox 360 argentina, comprar juegos xbox 360, tienda juegos xbox 360 cordoba, juegos xbox 360 online argentina{% endblock %}">
+    <meta name="author" content="Juegos360">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Spanish">
+    <meta name="geo.region" content="AR-C">
+    <meta name="geo.placename" content="Córdoba">
+    <meta name="geo.position" content="-31.4201;-64.1888">
+    <meta name="ICBM" content="-31.4201, -64.1888">
+    <link rel="canonical" href="{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock %}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{% block og_url %}{{ request.build_absolute_uri }}{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}{% block title %}Juegos360 - Tu Tienda de Juegos Xbox 360 en Córdoba, Argentina{% endblock %}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{% block meta_description %}Compra juegos para Xbox 360 en Córdoba, Argentina. La mejor selección de juegos Xbox 360 con envío a toda Argentina.{% endblock %}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'favicon.svg' %}{% endblock %}">
+    <meta property="og:locale" content="es_AR">
+    <meta property="og:site_name" content="Juegos360">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{% block twitter_url %}{{ request.build_absolute_uri }}{% endblock %}">
+    <meta name="twitter:title" content="{% block twitter_title %}{% block title %}Juegos360 - Tu Tienda de Juegos Xbox 360 en Córdoba, Argentina{% endblock %}{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{% block meta_description %}Compra juegos para Xbox 360 en Córdoba, Argentina. La mejor selección de juegos Xbox 360 con envío a toda Argentina.{% endblock %}{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'favicon.svg' %}{% endblock %}">
+    
+    <!-- Local Business Schema -->
+    <meta name="geo.region" content="AR-C">
+    <meta name="geo.placename" content="Córdoba, Argentina">
+    
     {% load static %}
     <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- Structured Data (JSON-LD) -->
+    {% block structured_data %}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Store",
+        "name": "Juegos360",
+        "description": "Tienda especializada en juegos para Xbox 360 en Córdoba, Argentina",
+        "url": "{{ request.scheme }}://{{ request.get_host }}",
+        "telephone": "+543515415397",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Córdoba",
+            "addressRegion": "Córdoba",
+            "addressCountry": "AR"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "-31.4201",
+            "longitude": "-64.1888"
+        },
+        "priceRange": "$$",
+        "currenciesAccepted": "ARS",
+        "paymentAccepted": "Mercado Pago",
+        "areaServed": {
+            "@type": "Country",
+            "name": "Argentina"
+        },
+        "sameAs": [
+            "https://wa.me/543515415397"
+        ]
+    }
+    </script>
+    {% endblock %}
 </head>
 <body>
     <!-- Header -->

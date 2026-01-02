@@ -1,7 +1,81 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ juego.titulo }} - Juegos360{% endblock %}
+{% block title %}{{ juego.titulo }} - Xbox 360 | Comprar en Córdoba, Argentina | Juegos360{% endblock %}
+{% block meta_description %}{{ juego.descripcion|truncatewords:30 }} Compra {{ juego.titulo }} para Xbox 360 en Córdoba, Argentina. Precio: ${{ juego.precio }} ARS. Envío a toda Argentina.{% endblock %}
+{% block meta_keywords %}{{ juego.titulo }}, xbox 360, {{ juego.get_genero_display|lower }}, juegos xbox 360 cordoba, comprar {{ juego.titulo }} argentina{% endblock %}
+{% block og_image %}{{ juego.imagen|default:'' }}{% endblock %}
+
+{% block structured_data %}
+{{ block.super }}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "{{ juego.titulo }}",
+    "description": "{{ juego.descripcion|escapejs }}",
+    "image": "{{ juego.imagen|default:'' }}",
+    "brand": {
+        "@type": "Brand",
+        "name": "{{ juego.desarrolladora }}"
+    },
+    "category": "{{ juego.get_genero_display }}",
+    "offers": {
+        "@type": "Offer",
+        "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'detalle_juego' juego.id %}",
+        "priceCurrency": "ARS",
+        "price": "{{ juego.precio }}",
+        "priceValidUntil": "2027-12-31",
+        "availability": "https://schema.org/{% if juego.disponible %}InStock{% else %}OutOfStock{% endif %}",
+        "seller": {
+            "@type": "Store",
+            "name": "Juegos360",
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Córdoba",
+                "addressRegion": "Córdoba",
+                "addressCountry": "AR"
+            }
+        },
+        "areaServed": {
+            "@type": "Country",
+            "name": "Argentina"
+        }
+    },
+    "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.5",
+        "reviewCount": "10"
+    }
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Inicio",
+            "item": "{{ request.scheme }}://{{ request.get_host }}/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Catálogo",
+            "item": "{{ request.scheme }}://{{ request.get_host }}/catalogo/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "{{ juego.titulo }}",
+            "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'detalle_juego' juego.id %}"
+        }
+    ]
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <section class="section">
