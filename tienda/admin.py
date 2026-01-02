@@ -12,6 +12,8 @@ class JuegoAdmin(admin.ModelAdmin):
     list_filter = ('genero', 'clasificacion', 'disponible', 'ano_lanzamiento')
     search_fields = ('titulo', 'desarrolladora', 'descripcion')
     readonly_fields = ('fecha_creacion', 'fecha_actualizacion')
+    list_per_page = 100  # Mostrar 100 juegos por página
+    ordering = ('-fecha_creacion',)  # Ordenar por fecha de creación (más recientes primero)
     fieldsets = (
         ('Información Básica', {
             'fields': ('titulo', 'descripcion', 'imagen'),
