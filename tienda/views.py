@@ -15,8 +15,12 @@ from .mercadopago_client import MercadoPagoClient
 
 def index(request):
     """Vista para la página principal"""
-    # Obtener juegos destacados (los más recientes disponibles)
-    juegos_destacados = Juego.objects.filter(disponible=True).order_by('-fecha_creacion')[:6]
+    try:
+        # Obtener juegos destacados (los más recientes disponibles)
+        juegos_destacados = Juego.objects.filter(disponible=True).order_by('-fecha_creacion')[:6]
+    except Exception as e:
+        # Si hay error (probablemente tabla no existe), retornar lista vacía
+        juegos_destacados = []
     
     # Obtener algunos juegos por género para mostrar variedad
     juegos_accion = Juego.objects.filter(disponible=True, genero='accion')[:4]
